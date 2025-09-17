@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ilimitado</title>
+    <link rel="stylesheet" href="fato.css"> <!-- Usa o mesmo CSS da index -->
+</head>
+
+<body>
+
+    <!-- Top Bar igual da index -->
+    <header>
+        <div class="menu-bar">
+            <h1>Fato do Dia</h1>
+            <div class="menu-right">
+                <div class="menu-icon" onclick="toggleSidebar()">☰</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <h3>Menu</h3>
+        <button onclick="toggleSidebar()">✖</button>
+    </div>
+    <div class="sidebar-content">
+        <button onclick="window.location.href='../index.html'">🏠 Início</button>
+        <button onclick="window.location.href='fatoDia.html'">📅 Fato do Dia</button>
+
+        <!-- Botão Modo Escuro -->
+        <button class="dark-mode-btn" onclick="toggleDarkMode()">🌙 Modo Escuro</button>
+    </div>
+</div>
+
+    <!-- Conteúdo Principal -->
+    <main>
+        <div class="main-card">
+
+            <!-- Pergunta -->
+            <div class="question-box" id="pergunta">
+                Carregando pergunta...
+            </div>
+
+            <!-- Vidas -->
+            <div class="vidas" id="vidas">
+                Vidas: ❤️❤️❤️❤️
+            </div>
+
+            <!-- Respostas -->
+            <div class="buttons" id="respostas">
+                <!-- Botões de respostas aparecem aqui -->
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal de feedback -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <p id="modal-texto"></p>
+            <button id="btn-voltar" onclick="fecharModal()">Voltar</button>
+        </div>
+    </div>
+
+    <script src="fatoDia.js"></script> <!-- Arquivo de lógica JS -->
+</body>
+
+</html>
