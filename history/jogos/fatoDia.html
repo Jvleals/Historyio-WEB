@@ -77,5 +77,40 @@
     </div>
 
     <script src="fatoDia.js"></script>
+    <script>
+// Funções da Sidebar - Copiadas do interatividade.js
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('open');
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle('dark-mode');
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDarkMode);
+    
+    // Atualizar ícone do botão
+    const darkModeBtn = document.querySelector('.sidebar-content button:nth-child(3)');
+    if (darkModeBtn) {
+        if (isDarkMode) {
+            darkModeBtn.innerHTML = '<i class="fas fa-sun me-2"></i>Modo Claro';
+        } else {
+            darkModeBtn.innerHTML = '<i class="fas fa-moon me-2"></i>Modo Escuro';
+        }
+    }
+}
+
+// Carregar modo escuro salvo
+document.addEventListener('DOMContentLoaded', function() {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    if (darkMode) {
+        document.body.classList.add('dark-mode');
+        const darkModeBtn = document.querySelector('.sidebar-content button:nth-child(3)');
+        if (darkModeBtn) {
+            darkModeBtn.innerHTML = '<i class="fas fa-sun me-2"></i>Modo Claro';
+        }
+    }
+});
+</script>
 </body>
 </html>

@@ -1,27 +1,38 @@
-import { SistemaPontuacao } from 'pontos.js';
-
+// fatoDia.js - SISTEMA COMPLETO DE FATO DO DIA
 let vidas = 4;
 let respostaCorreta = "";
 let jogoAtivo = true;
 let ofensivaAtual = 0;
 let recordeOfensiva = 0;
 let jaJogouHoje = false;
+let perguntaDiaId = null;
+let pontuacaoAtual = 0;
 
-function carregarPergunta() {
+function carregarPerguntaDoDia() {
     if (!jogoAtivo) return;
 
-    fetch('getPergunta.php')
-        .then(res => res.json())
+    console.log('Carregando pergunta do dia...');
+    
+    fetch('../api/getPerguntaDoDia.php')
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            return res.json();
+        })
         .then(data => {
+            console.log('Dados recebidos:', data);
+            
             if (data.error) {
-                console.error('Erro:', data.error);
-                mostrarModal('Erro: ' + data.error, false);
+                document.getElementById('pergunta').innerHTML = 
+                    `<span style="color: red;">Erro: ${data.error}</span>`;
                 return;
             }
             
             respostaCorreta = data.correta;
             ofensivaAtual = data.ofensiva_atual || 0;
             recordeOfensiva = data.recorde_ofensiva || 0;
+            jaJogouHoje = data.ja_jogou || false;
+            perguntaDiaId = data.pergunta_dia_id;
+            pontuacaoAtual = data.pontuacao_atual || 0;
             
             document.getElementById('pergunta').innerText = data.pergunta;
             atualizarDisplayOfensiva();
@@ -29,17 +40,32 @@ function carregarPergunta() {
             const respostasDiv = document.getElementById('respostas');
             respostasDiv.innerHTML = '';
 
-            data.respostas.forEach(texto => {
-                const btn = document.createElement('button');
-                btn.className = 'resposta-btn';
-                btn.textContent = texto;
-                btn.onclick = () => verificarResposta(btn, texto);
-                respostasDiv.appendChild(btn);
-            });
+            if (jaJogouHoje) {
+                // Usuário já jogou hoje - mostrar resultado
+                respostasDiv.innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h4 style="color: var(--primary);">🎯 Você já jogou hoje!</h4>
+                        <p>Sua pontuação: <strong>${pontuacaoAtual} pontos</strong></p>
+                        <p>Ofensiva atual: <strong>${ofensivaAtual} dias</strong></p>
+                        <small style="color: #666;">Volte amanhã para uma nova pergunta!</small>
+                    </div>
+                `;
+                jogoAtivo = false;
+            } else if (data.respostas && data.respostas.length > 0) {
+                // Usuário pode jogar - mostrar respostas
+                data.respostas.forEach(texto => {
+                    const btn = document.createElement('button');
+                    btn.className = 'resposta-btn';
+                    btn.textContent = texto;
+                    btn.onclick = () => verificarResposta(btn, texto);
+                    respostasDiv.appendChild(btn);
+                });
+            }
         })
         .catch(error => {
             console.error('Erro ao carregar pergunta:', error);
-            document.getElementById('pergunta').innerText = 'Erro ao carregar pergunta. Tente novamente.';
+            document.getElementById('pergunta').innerHTML = 
+                `<span style="color: red;">Erro: ${error.message}</span>`;
         });
 }
 
@@ -55,87 +81,91 @@ function verificarResposta(botao, texto) {
     if (texto === respostaCorreta) {
         botao.classList.add('correct');
         jogoAtivo = false;
-        
-        // SALVAR PONTOS NO BANCO
-        SistemaPontuacao.acertouModoDiario().then(sucesso => {
-            if (sucesso) {
-                console.log('Pontos salvos com sucesso!');
-            }
-        });
-        
-        registrarResposta(true);
+        registrarJogada(true, vidas); // Acertou com vidas restantes
     } else {
         botao.classList.add('wrong');
         vidas--;
         atualizarVidas();
 
+        // Mostra a resposta correta
         todosBotoes.forEach(btn => {
             if (btn.textContent === respostaCorreta) {
                 btn.classList.add('correct');
             }
         });
 
-        // SALVAR ERRO NO BANCO
-        SistemaPontuacao.errouModoDiario().then(sucesso => {
-            if (sucesso) {
-                console.log('Erro registrado');
-            }
-        });
-
-        const vidasDiv = document.getElementById('vidas');
-        vidasDiv.classList.add('vibrar');
-        setTimeout(() => vidasDiv.classList.remove('vibrar'), 300);
-
         if (vidas <= 0) {
             jogoAtivo = false;
-            registrarResposta(false);
+            registrarJogada(false, 0); // Errou todas as vidas
+        } else {
+            // Ainda tem vidas - continua jogando
+            setTimeout(() => {
+                // Mantém os botões desabilitados mas permite nova tentativa
+                todosBotoes.forEach(btn => {
+                    if (!btn.classList.contains('correct')) {
+                        btn.classList.remove('disabled', 'wrong');
+                        btn.onclick = () => verificarResposta(btn, btn.textContent);
+                    }
+                });
+            }, 2000);
         }
     }
 }
 
-function registrarResposta(acertou) {
+function registrarJogada(acertou, vidasRestantes) {
     const formData = new FormData();
+    formData.append('pergunta_dia_id', perguntaDiaId);
+    formData.append('vidas_restantes', vidasRestantes);
     formData.append('acertou', acertou);
-
-    fetch('registrarResposta.php', {
+    
+    fetch('../api/registrarJogadaDiaria.php', {
         method: 'POST',
         body: formData
     })
     .then(res => res.json())
     .then(data => {
-        if (data.error) {
-            // Usuário já jogou hoje
+        if (data.success) {
             jaJogouHoje = true;
-            mostrarModal(data.error + ' Sua ofensiva atual: ' + ofensivaAtual + ' dias.', false, true);
-        } else if (data.success) {
-            ofensivaAtual = data.ofensiva_atual;
-            recordeOfensiva = data.recorde_ofensiva;
-            jaJogouHoje = true;
-            
-            if (acertou) {
-                mostrarModal(
-                    `🎉 Parabéns! Resposta correta!\n\n` +
-                    `✅ Ofensiva atual: ${ofensivaAtual} dias\n` +
-                    `🏆 Recorde: ${recordeOfensiva} dias`,
-                    true,
-                    false
-                );
-            } else {
-                mostrarModal(
-                    `😕 Que pena! Você perdeu.\n\n` +
-                    `🔄 Ofensiva reiniciada: 0 dias\n` +
-                    `🏆 Seu recorde: ${recordeOfensiva} dias`,
-                    false,
-                    false
-                );
-            }
-            atualizarDisplayOfensiva();
+            mostrarResultadoFinal(data.pontuacao, acertou, vidasRestantes);
+        } else {
+            console.error('Erro ao registrar jogada:', data.error);
+            mostrarModal('Erro ao salvar resultado: ' + data.error, false);
         }
     })
     .catch(error => {
-        console.error('Erro ao registrar resposta:', error);
-        mostrarModal('Erro ao salvar resultado. Tente novamente.', false, false);
+        console.error('Erro de conexão:', error);
+        mostrarModal('Erro de conexão ao salvar resultado', false);
     });
+}
+
+function mostrarResultadoFinal(pontuacao, acertou, vidasRestantes) {
+    let mensagem = '';
+    let titulo = '';
+    
+    if (acertou) {
+        const mensagensAcerto = [
+            "🎉 PERFEITO! Acertou de primeira! +50 pontos",
+            "🎉 EXCELENTE! Acertou na segunda! +35 pontos", 
+            "🎉 MUITO BEM! Acertou na terceira! +20 pontos",
+            "🎉 UFA! Acertou na última! +10 pontos"
+        ];
+        
+        const index = 4 - vidasRestantes; // 0=primeira, 1=segunda, etc.
+        mensagem = mensagensAcerto[index] + `\n\n` +
+                  `✅ Ofensiva atual: ${ofensivaAtual + 1} dias\n` +
+                  `🏆 Recorde: ${Math.max(recordeOfensiva, ofensivaAtual + 1)} dias\n\n` +
+                  `Volte amanhã para continuar sua ofensiva!`;
+        titulo = 'Parabéns!';
+    } else {
+        mensagem = `😕 Que pena! Você perdeu.\n\n` +
+                  `🔄 Ofensiva reiniciada: 0 dias\n` +
+                  `🏆 Seu recorde: ${recordeOfensiva} dias\n\n` +
+                  `Volte amanhã para recomeçar!`;
+        titulo = 'Que Pena!';
+    }
+    
+    mostrarModal(mensagem, acertou);
+    atualizarDisplayOfensiva();
 }
 
 function atualizarVidas() {
@@ -152,45 +182,29 @@ function atualizarVidas() {
 }
 
 function atualizarDisplayOfensiva() {
-    // Atualiza o título ou adiciona display de ofensiva
     const titulo = document.querySelector('.menu-bar h1');
-    titulo.innerHTML = `<i class="fas fa-landmark me-2"></i>Fato do Dia <small style="font-size: 0.6em;">(🔥: ${ofensivaAtual} dias)</small>`;
+    if (titulo) {
+        titulo.innerHTML = `<i class="fas fa-landmark me-2"></i>Fato do Dia <small style="font-size: 0.6em;">(Ofensiva: ${ofensivaAtual} dias)</small>`;
+    }
 }
 
-function mostrarModal(mensagem, acertou, jaJogou = false) {
+function mostrarModal(mensagem, acertou) {
     const modal = document.getElementById('infoModal');
     const modalContent = document.getElementById('modalContent');
     const modalTitle = document.getElementById('modalTitle');
     
     modalContent.innerHTML = mensagem.replace(/\n/g, '<br>');
-    modalTitle.textContent = jaJogou ? 'Já Jogou Hoje' : (acertou ? 'Parabéns!' : 'Que Pena!');
+    modalTitle.textContent = acertou ? 'Parabéns!' : 'Que Pena!';
     modal.classList.add('show');
 
-    // Atualiza o evento do botão do modal
     const modalBtn = modal.querySelector('button');
-    modalBtn.textContent = jaJogou ? 'Entendi' : 'Continuar';
+    const novoBtn = modalBtn.cloneNode(true);
+    modalBtn.parentNode.replaceChild(novoBtn, modalBtn);
     
-    modalBtn.onclick = () => {
+    novoBtn.onclick = () => {
         fecharModal();
-        if (!jaJogou) {
-            if (acertou || vidas > 0) {
-                // Recarrega para nova tentativa (se ainda tem vidas)
-                setTimeout(() => {
-                    vidas = 4;
-                    jogoAtivo = true;
-                    atualizarVidas();
-                    carregarPergunta();
-                }, 1000);
-            } else {
-                // Reset completo
-                setTimeout(() => {
-                    vidas = 4;
-                    jogoAtivo = true;
-                    atualizarVidas();
-                    carregarPergunta();
-                }, 1000);
-            }
-        }
+        // Recarrega a página para atualizar o estado
+        setTimeout(() => location.reload(), 500);
     };
 }
 
@@ -199,35 +213,16 @@ function fecharModal() {
     modal.classList.remove('show');
 }
 
-function toggleSidebar() {
-    const sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('open');
-}
+let inicializado = false;
 
-function toggleDarkMode() {
-    document.body.classList.toggle('dark-mode');
-    const isDarkMode = document.body.classList.contains('dark-mode');
-    localStorage.setItem('darkMode', isDarkMode);
-    
-    // Atualizar ícone do botão
-    const darkModeBtn = document.querySelector('.sidebar-content button:nth-child(3)');
-    if (isDarkMode) {
-        darkModeBtn.innerHTML = '<i class="fas fa-sun me-2"></i>Modo Claro';
-    } else {
-        darkModeBtn.innerHTML = '<i class="fas fa-moon me-2"></i>Modo Escuro';
-    }
-}
-
-// Inicialização
-document.addEventListener('DOMContentLoaded', function() {
-    // Carregar preferência de modo escuro
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    if (darkMode) {
-        document.body.classList.add('dark-mode');
-        const darkModeBtn = document.querySelector('.sidebar-content button:nth-child(3)');
-        darkModeBtn.innerHTML = '<i class="fas fa-sun me-2"></i>Modo Claro';
-    }
+function inicializarJogo() {
+    if (inicializado) return;
+    inicializado = true;
     
     atualizarVidas();
-    carregarPergunta();
+    carregarPerguntaDoDia();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(inicializarJogo, 100);
 });
