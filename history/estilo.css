@@ -9,8 +9,6 @@
     --card-bg: rgba(255, 255, 255, 0.92);
     --text: #333333;
     --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
-    --correct: #28a745;
-    --wrong: #d32f2f;
 }
 
 body {
@@ -30,6 +28,58 @@ body.dark-mode {
     --shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #000000;
+}
+
+/* Ajustes específicos para modo escuro */
+body.dark-mode .main-card {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000000;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+body.dark-mode .main-card h2 {
+    color: #000000;
+}
+
+body.dark-mode .main-card h3 {
+    color: #000000;
+}
+
+body.dark-mode .sidebar {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000000;
+}
+
+body.dark-mode .sidebar-content button {
+    background: rgba(67, 97, 238, 0.15);
+    color: #000000;
+    border: 1px solid rgba(67, 97, 238, 0.3);
+}
+
+body.dark-mode .sidebar-content button:hover {
+    background: var(--primary);
+    color: #ffffff;
+}
+
+body.dark-mode .modal-content {
+    background: rgba(255, 255, 255, 0.95);
+    color: #000000;
+}
+
+body.dark-mode .modal-content h2 {
+    color: #000000;
+}
+
+body.dark-mode .modal-content p {
+    color: #000000;
+}
+
+body.dark-mode .close-btn {
+    color: #000000;
+}
+
+body.dark-mode .close-btn:hover {
+    color: var(--accent);
 }
 
 /* Header moderno */
@@ -65,8 +115,12 @@ body.dark-mode {
 }
 
 /* Conteúdo principal */
-.min-vh-100 {
-    min-height: 100vh !important;
+main {
+    min-height: calc(100vh - 70px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
 }
 
 .main-card {
@@ -85,53 +139,38 @@ body.dark-mode .main-card {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Vidas */
-.vidas-container {
-    display: flex;
-    justify-content: center;
-}
-
-.vidas {
-    display: flex;
-    gap: 10px;
-    font-size: 1.8rem;
-    color: var(--wrong);
-}
-
-.vidas i {
-    transition: all 0.3s ease;
-}
-
-.vidas .lost {
-    opacity: 0.3;
-    transform: scale(0.8);
-}
-
-/* Caixa da pergunta */
-.question-box {
-    background: rgba(67, 97, 238, 0.1);
-    border: 2px solid var(--primary);
-    border-radius: 16px;
-    padding: 24px;
-    font-size: 1.3rem;
+.main-card h2 {
     color: var(--primary);
-    font-weight: 600;
-    line-height: 1.5;
-    min-height: 120px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+    margin-bottom: 16px;
+    font-weight: 800;
+    font-size: 2rem;
 }
 
-/* Botões de resposta */
+.main-card h2 span {
+    color: var(--accent);
+}
+
+.main-card h3 {
+    color: var(--secondary);
+    margin-bottom: 28px;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+/* Botões modernos */
 .buttons {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
-.resposta-btn {
+.button-group {
+    position: relative;
+    display: flex;
+}
+
+.button-group button {
+    flex: 1;
     padding: 16px 20px;
     border: none;
     border-radius: 12px;
@@ -142,41 +181,38 @@ body.dark-mode .main-card {
     transition: all 0.3s ease;
     font-size: 1rem;
     box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
-    text-align: left;
 }
 
-.resposta-btn:hover:not(.disabled) {
+.button-group button:hover {
     background: #3651d3;
-    transform: translateY(-2px);
+    transform: translateY(-3px);
     box-shadow: 0 6px 12px rgba(67, 97, 238, 0.4);
 }
 
-.resposta-btn.correct {
-    background: var(--correct) !important;
-    color: white;
-    cursor: default;
-    transform: none;
-    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+.info {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 24px;
+    height: 24px;
+    background: var(--warning);
+    color: var(--dark);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-.resposta-btn.wrong {
-    background: var(--wrong) !important;
-    color: white;
-    cursor: default;
-    transform: none;
-    box-shadow: 0 4px 8px rgba(211, 47, 47, 0.3);
+.info:hover {
+    transform: translateY(-50%) scale(1.1);
 }
 
-.resposta-btn.disabled {
-    background: #6c757d !important;
-    color: white;
-    cursor: not-allowed;
-    opacity: 0.7;
-    transform: none;
-    box-shadow: none;
-}
-
-/* Sidebar */
+/* Sidebar moderna */
 .sidebar {
     position: fixed;
     top: 0;
@@ -227,7 +263,7 @@ body.dark-mode .main-card {
 .sidebar-content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 16px;
 }
 
 .sidebar-content button {
@@ -248,7 +284,7 @@ body.dark-mode .main-card {
     transform: translateX(5px);
 }
 
-/* Modal */
+/* Modal moderno */
 .modal {
     position: fixed;
     top: 0;
@@ -295,7 +331,7 @@ body.dark-mode .main-card {
 }
 
 .modal-content p {
-    font-size: 1.1rem;
+    font-size: 1rem;
     color: var(--text);
     line-height: 1.6;
     margin-bottom: 24px;
@@ -315,7 +351,7 @@ body.dark-mode .main-card {
     color: var(--accent);
 }
 
-/* Elementos decorativos */
+/* Elementos decorativos modernos */
 .decoration {
     position: absolute;
     z-index: -1;
@@ -342,56 +378,7 @@ body.dark-mode .main-card {
     opacity: 0.2;
 }
 
-/* Animações */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes vibrar {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    50% { transform: translateX(3px); }
-    75% { transform: translateX(-3px); }
-    100% { transform: translateX(0); }
-}
-
-.vibrar {
-    animation: vibrar 0.3s ease;
-}
-
-.main-card {
-    animation: fadeIn 0.6s ease-out;
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-    .main-card {
-        padding: 24px;
-        border-radius: 16px;
-    }
-    
-    .question-box {
-        padding: 20px;
-        font-size: 1.1rem;
-        min-height: 100px;
-    }
-    
-    .resposta-btn {
-        padding: 14px 16px;
-        font-size: 0.95rem;
-    }
-    
-    .vidas {
-        font-size: 1.5rem;
-    }
-    
-    .sidebar {
-        width: 280px;
-        right: -280px;
-    }
-}
-
+/* Responsividade com Bootstrap */
 @media (max-width: 576px) {
     .menu-bar {
         padding: 14px 20px;
@@ -402,51 +389,82 @@ body.dark-mode .main-card {
     }
     
     .main-card {
-        padding: 20px;
+        padding: 24px;
+        border-radius: 16px;
     }
     
-    .question-box {
+    .main-card h2 {
+        font-size: 1.7rem;
+    }
+    
+    .main-card h3 {
+        font-size: 1.1rem;
+    }
+    
+    .sidebar {
+        width: 280px;
+        right: -280px;
+    }
+    
+    .button-group button {
+        padding: 14px 16px;
+        font-size: 0.95rem;
+    }
+    
+    .info {
+        width: 22px;
+        height: 22px;
+        font-size: 0.7rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .main-card {
+        padding: 20px 16px;
+    }
+    
+    .main-card h2 {
+        font-size: 1.5rem;
+    }
+    
+    .main-card h3 {
         font-size: 1rem;
-        padding: 16px;
     }
     
-    .resposta-btn {
+    .button-group button {
         padding: 12px 14px;
         font-size: 0.9rem;
     }
 }
 
-/* Display de Ofensiva */
-.ofensiva-display {
-    background: rgba(67, 97, 238, 0.1);
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    text-align: center;
+/* Animações suaves */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
-.ofensiva-info {
+.main-card {
+    animation: fadeIn 0.6s ease-out;
+}
+
+/* Estilo para os botões de modo de jogo */
+.game-mode {
     display: flex;
-    justify-content: space-around;
-    font-size: 0.9rem;
-    font-weight: 600;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
 }
 
-.ofensiva-atual {
+.game-mode i {
+    font-size: 2rem;
+    margin-bottom: 8px;
     color: var(--primary);
 }
 
-.recorde-ofensiva {
+.game-mode .daily {
+    color: var(--success);
+}
+
+.game-mode .unlimited {
     color: var(--accent);
-}
-
-.menu-bar h1 small {
-    font-weight: normal;
-    opacity: 0.8;
-}
-
-/* Modal com múltiplas linhas */
-.modal-content p {
-    white-space: pre-line;
 }

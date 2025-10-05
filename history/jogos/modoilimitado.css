@@ -11,6 +11,7 @@
     --shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
     --correct: #28a745;
     --wrong: #d32f2f;
+    --star: #ffd700;
 }
 
 body {
@@ -85,26 +86,38 @@ body.dark-mode .main-card {
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Vidas */
-.vidas-container {
+/* Pontuação - CORES MAIS SUAVES */
+.pontuacao-container {
     display: flex;
     justify-content: center;
 }
 
-.vidas {
+.pontuacao {
     display: flex;
-    gap: 10px;
-    font-size: 1.8rem;
-    color: var(--wrong);
+    align-items: center;
+    gap: 8px;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--primary); /* Mudei para a cor primária do tema */
+    background: rgba(67, 97, 238, 0.1); /* Fundo sutil com a cor primária */
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: 2px solid var(--primary); /* Borda na cor primária */
 }
 
-.vidas i {
-    transition: all 0.3s ease;
+.pontuacao i {
+    color: var(--primary); /* Ícone na cor primária */
 }
 
-.vidas .lost {
-    opacity: 0.3;
-    transform: scale(0.8);
+/* No modo escuro, ajusta automaticamente */
+body.dark-mode .pontuacao {
+    color: #000000; /* Texto preto no modo escuro */
+    background: rgba(67, 97, 238, 0.15);
+    border-color: var(--primary);
+}
+
+body.dark-mode .pontuacao i {
+    color: #000000; /* Ícone preto no modo escuro */
 }
 
 /* Caixa da pergunta */
@@ -176,7 +189,14 @@ body.dark-mode .main-card {
     box-shadow: none;
 }
 
-/* Sidebar */
+/* Estatísticas */
+.estatisticas {
+    color: var(--text);
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Sidebar (mesmo estilo do fato do dia) */
 .sidebar {
     position: fixed;
     top: 0;
@@ -348,16 +368,14 @@ body.dark-mode .main-card {
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes vibrar {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    50% { transform: translateX(3px); }
-    75% { transform: translateX(-3px); }
-    100% { transform: translateX(0); }
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
 }
 
-.vibrar {
-    animation: vibrar 0.3s ease;
+.pulse {
+    animation: pulse 0.5s ease;
 }
 
 .main-card {
@@ -382,8 +400,9 @@ body.dark-mode .main-card {
         font-size: 0.95rem;
     }
     
-    .vidas {
-        font-size: 1.5rem;
+    .pontuacao {
+        font-size: 1.2rem;
+        padding: 8px 16px;
     }
     
     .sidebar {
@@ -414,39 +433,8 @@ body.dark-mode .main-card {
         padding: 12px 14px;
         font-size: 0.9rem;
     }
-}
-
-/* Display de Ofensiva */
-.ofensiva-display {
-    background: rgba(67, 97, 238, 0.1);
-    border: 2px solid var(--primary);
-    border-radius: 10px;
-    padding: 10px 15px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.ofensiva-info {
-    display: flex;
-    justify-content: space-around;
-    font-size: 0.9rem;
-    font-weight: 600;
-}
-
-.ofensiva-atual {
-    color: var(--primary);
-}
-
-.recorde-ofensiva {
-    color: var(--accent);
-}
-
-.menu-bar h1 small {
-    font-weight: normal;
-    opacity: 0.8;
-}
-
-/* Modal com múltiplas linhas */
-.modal-content p {
-    white-space: pre-line;
+    
+    .pontuacao {
+        font-size: 1.1rem;
+    }
 }
