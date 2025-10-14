@@ -31,17 +31,26 @@
             <form id="formCadastro">
                 <div class="mb-3">
                     <label class="form-label">Usuário</label>
-                    <input type="text" class="form-control" name="username" required minlength="3">
+                    <input type="text" class="form-control" name="username" required minlength="3"
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Email</label>
-                    <input type="email" class="form-control" name="email">
+                    <input type="email" class="form-control" name="email" required
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Senha</label>
-                    <input type="password" class="form-control" name="password" required minlength="6">
+                    <input type="password" class="form-control" name="password" required minlength="6"
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Confirmar Senha</label>
+                    <input type="password" class="form-control" name="confirm_password" required minlength="6"
+                           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
                 </div>
 
                 <button type="submit" class="btn btn-primary w-100 py-2 mb-3">

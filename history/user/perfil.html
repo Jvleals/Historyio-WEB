@@ -28,37 +28,77 @@
 
     <main class="container-fluid py-4">
         <div class="main-card">
-            <div class="text-center mb-4">
-                <div class="avatar-circle mb-3">
-                    <i class="fas fa-user fa-2x"></i>
+            <div id="statsContainer">
+                <div class="text-center mb-4">
+                    <div class="avatar-circle mb-3">
+                        <i class="fas fa-user fa-3x"></i>
+                    </div>
+                    <h3 id="username">Carregando...</h3>
+                    <p class="text-muted" id="email">email@example.com</p>
                 </div>
-                <h3 id="userName">Carregando...</h3>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-star text-warning fa-2x mb-2"></i>
+                            <div class="stat-value" id="pontosTotais">0</div>
+                            <small>Pontos Totais</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-calendar-day text-success fa-2x mb-2"></i>
+                            <div class="stat-value" id="pontosDiarios">0</div>
+                            <small>Pontos Diários</small>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-infinity text-info fa-2x mb-2"></i>
+                            <div class="stat-value" id="pontosIlimitados">0</div>
+                            <small>Modo Ilimitado</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-3 mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-fire text-warning fa-2x mb-2"></i>
+                            <div class="stat-value" id="ofensivaAtual">0</div>
+                            <small>Ofensiva</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-trophy text-primary fa-2x mb-2"></i>
+                            <div class="stat-value" id="recordeOfensiva">0</div>
+                            <small>Recorde</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-check text-success fa-2x mb-2"></i>
+                            <div class="stat-value" id="totalAcertos">0</div>
+                            <small>Acertos</small>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card text-center p-3">
+                            <i class="fas fa-times text-danger fa-2x mb-2"></i>
+                            <div class="stat-value" id="totalErros">0</div>
+                            <small>Erros</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info text-center">
+                    <i class="fas fa-percentage me-2"></i>
+                    Taxa de Acerto: <strong id="taxaAcerto">0%</strong>
+                </div>
             </div>
 
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <i class="fas fa-fire text-warning fa-2x mb-2"></i>
-                    <div class="stat-value" id="ofensivaAtual">0</div>
-                    <small>Ofensiva Atual</small>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-trophy text-primary fa-2x mb-2"></i>
-                    <div class="stat-value" id="recordeOfensiva">0</div>
-                    <small>Recorde</small>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-calendar-day text-success fa-2x mb-2"></i>
-                    <div class="stat-value" id="pontosDiarios">0</div>
-                    <small>Pontos Diários</small>
-                </div>
-                <div class="stat-item">
-                    <i class="fas fa-infinity text-info fa-2x mb-2"></i>
-                    <div class="stat-value" id="pontosIlimitados">0</div>
-                    <small>Pontos Ilimitados</small>
-                </div>
-            </div>
-
-            <button class="btn btn-outline-danger w-100 mt-3" onclick="sair()">
+            <button class="btn btn-outline-danger w-100 mt-3" onclick="logout()">
                 <i class="fas fa-sign-out-alt me-2"></i>Sair
             </button>
         </div>

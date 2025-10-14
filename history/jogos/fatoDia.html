@@ -76,6 +76,29 @@
         </div>
     </div>
 
+    <script>
+// Verificar se o usuário está logado antes de carregar o jogo
+async function verificarLogin() {
+    try {
+        const response = await fetch('../api/checkSession.php');
+        const data = await response.json();
+        
+        if (!data.logged_in) {
+            alert('Você precisa fazer login para jogar!');
+            window.location.href = '../user/login.html';
+            return false;
+        }
+        return true;
+    } catch (error) {
+        console.error('Erro ao verificar login:', error);
+        alert('Erro ao verificar autenticação');
+        return false;
+    }
+}
+
+// Verificar login ao carregar a página
+verificarLogin();
+    </script>
     <script src="fatoDia.js"></script>
     <script>
 // Funções da Sidebar - Copiadas do interatividade.js
