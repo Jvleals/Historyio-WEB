@@ -1,12 +1,14 @@
-// LOGIN
+// ===== SISTEMA DE LOGIN =====
+// Processa o formulário de login
 const formLogin = document.getElementById('formLogin');
 if (formLogin) {
     formLogin.addEventListener('submit', async function(e) {
-        e.preventDefault();
+        e.preventDefault(); // Impede o envio padrão do formulário
         
         const formData = new FormData(formLogin);
         
         try {
+            // Envia os dados para a API de login
             const response = await fetch('../api/login.php', {
                 method: 'POST',
                 body: formData
@@ -16,7 +18,7 @@ if (formLogin) {
             
             if (data.success) {
                 alert('Login realizado com sucesso!');
-                window.location.href = '../index.html';
+                window.location.href = '../index.html'; // Redireciona para a página principal
             } else {
                 alert('Erro: ' + data.error);
             }
@@ -26,6 +28,7 @@ if (formLogin) {
         }
     });
     
+    // Botão para mostrar/ocultar senha
     const togglePassword = document.getElementById('togglePassword');
     const passwordInput = document.getElementById('password');
     if (togglePassword && passwordInput) {
@@ -39,7 +42,8 @@ if (formLogin) {
     }
 }
 
-// CADASTRO
+// ===== SISTEMA DE CADASTRO =====
+// Processa o formulário de criação de conta
 const formCadastro = document.getElementById('formCadastro');
 if (formCadastro) {
     formCadastro.addEventListener('submit', async function(e) {
@@ -49,12 +53,14 @@ if (formCadastro) {
         const password = formData.get('password');
         const confirmPassword = formData.get('confirm_password');
         
+        // Valida se as senhas são iguais antes de enviar
         if (password !== confirmPassword) {
             alert('As senhas não coincidem!');
             return;
         }
         
         try {
+            // Envia os dados para a API de registro
             const response = await fetch('../api/register.php', {
                 method: 'POST',
                 body: formData
@@ -75,7 +81,8 @@ if (formCadastro) {
     });
 }
 
-// RANKING
+// ===== SISTEMA DE RANKING =====
+// Carrega e exibe o ranking global dos jogadores
 const rankingList = document.getElementById('rankingList');
 if (rankingList) {
     loadRanking();
@@ -89,8 +96,10 @@ async function loadRanking() {
         if (data.success && data.ranking) {
             rankingList.innerHTML = '';
             
+            // Percorre cada usuário do ranking
             data.ranking.forEach((user, index) => {
                 const position = index + 1;
+                // Adiciona medalhas para os 3 primeiros colocados
                 const medal = position === 1 ? '🥇' : position === 2 ? '🥈' : position === 3 ? '🥉' : position;
                 
                 const row = document.createElement('tr');
@@ -109,7 +118,8 @@ async function loadRanking() {
     }
 }
 
-// PERFIL
+// ===== SISTEMA DE PERFIL =====
+// Carrega as estatísticas do usuário logado
 const statsContainer = document.getElementById('statsContainer');
 if (statsContainer) {
     loadStats();
@@ -123,6 +133,8 @@ async function loadStats() {
         if (data.success && data.stats) {
             const stats = data.stats;
             
+            // Preenche os dados do perfil na página
+            
             document.getElementById('username').textContent = stats.username;
             document.getElementById('email').textContent = stats.email;
             document.getElementById('pontosTotais').textContent = stats.pontos_totais || 0;
@@ -133,6 +145,7 @@ async function loadStats() {
             document.getElementById('ofensivaAtual').textContent = stats.ofensiva_atual || 0;
             document.getElementById('recordeOfensiva').textContent = stats.recorde_ofensiva || 0;
             
+            // Calcula a taxa de acerto do jogador
             const totalJogos = (stats.total_acertos || 0) + (stats.total_erros || 0);
             const taxaAcerto = totalJogos > 0 ? ((stats.total_acertos / totalJogos) * 100).toFixed(1) : 0;
             document.getElementById('taxaAcerto').textContent = taxaAcerto + '%';
@@ -146,11 +159,13 @@ async function loadStats() {
     }
 }
 
+// Função auxiliar para fechar modais
 function fecharModal() {
     const modal = document.getElementById('infoModal');
     if (modal) modal.classList.remove('show');
 }
 
+// ===== SISTEMA DE LOGOUT =====
 async function logout() {
     try {
         const response = await fetch('../api/logout.php');

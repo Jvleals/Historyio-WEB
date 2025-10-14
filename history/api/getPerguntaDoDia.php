@@ -1,14 +1,17 @@
 <?php
+// API - Buscar Pergunta do Dia
+// Retorna a pergunta diária e verifica se o usuário já jogou hoje
+
 error_reporting(0);
 ini_set('display_errors', 0);
 
 session_start();
 header('Content-Type: application/json');
 
-// Debug inicial
+// Log para debug (pode ser removido em produção)
 error_log("=== INICIANDO GET PERGUNTA DO DIA ===");
 
-// Verificar sessão
+// Verifica se o usuário está logado
 if (!isset($_SESSION['user_id'])) {
     error_log("ERRO: Usuário não logado na sessão");
     echo json_encode(['error' => 'Usuário não logado']);
@@ -18,7 +21,7 @@ if (!isset($_SESSION['user_id'])) {
 $userId = $_SESSION['user_id'];
 error_log("Usuário ID da sessão: " . $userId);
 
-// Verificar se config.php existe e carregar
+// Carrega as configurações do banco
 $config_path = __DIR__ . '/config.php';
 if (!file_exists($config_path)) {
     error_log("ERRO: config.php não encontrado em: " . $config_path);
@@ -28,7 +31,7 @@ if (!file_exists($config_path)) {
 
 require_once $config_path;
 
-// Verificar se a conexão com o banco funciona
+// Testa a conexão com o banco de dados
 try {
     $testConnection = $pdo->query("SELECT 1");
     error_log("Conexão com banco: OK");
@@ -38,6 +41,7 @@ try {
     exit;
 }
 
+// Pega a data de hoje
 $dataAtual = date('Y-m-d');
 error_log("Data atual: " . $dataAtual);
 
