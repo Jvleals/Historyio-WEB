@@ -1,0 +1,65 @@
+==========================================
+CORREÇÃO DO RANKING - INSTRUÇÕES
+==========================================
+
+PROBLEMA:
+- Nomes de usuários estavam aparecendo duplicados no ranking
+- Pontos não estavam sendo somados corretamente
+
+CAUSA:
+- Tabela user_stats permitia múltiplos registros para o mesmo usuário
+- Faltava constraint UNIQUE na coluna usuario_id
+
+SOLUÇÃO APLICADA:
+1. Corrigido os arquivos PHP para usar INSERT ON DUPLICATE KEY UPDATE corretamente
+2. Criado script SQL para limpar duplicações e adicionar constraint
+
+==========================================
+PASSO A PASSO PARA CORRIGIR O BANCO
+==========================================
+
+1. Abra o phpMyAdmin (http://localhost/phpmyadmin)
+
+2. Selecione o banco de dados "fato_do_dia"
+
+3. Vá na aba "SQL"
+
+4. Abra o arquivo "corrigir_ranking.sql" (está na mesma pasta deste arquivo)
+
+5. Copie TODO o conteúdo do arquivo
+
+6. Cole na área de SQL do phpMyAdmin
+
+7. Clique em "Executar"
+
+8. Aguarde a mensagem de sucesso
+
+9. Recarregue a página de ranking no navegador
+
+==========================================
+O QUE O SCRIPT FAZ:
+==========================================
+
+1. Consolida todos os pontos duplicados em uma tabela temporária
+2. Limpa a tabela user_stats
+3. Insere os dados consolidados (sem duplicações)
+4. Adiciona constraint UNIQUE para prevenir duplicações futuras
+5. Mostra o resultado final ordenado por pontuação
+
+==========================================
+VERIFICAÇÃO:
+==========================================
+
+Após executar o script, verifique se:
+- Cada usuário aparece apenas UMA vez no ranking
+- Os pontos estão corretos (somados)
+- O ranking está ordenado do maior para o menor
+
+==========================================
+ARQUIVOS CORRIGIDOS:
+==========================================
+
+✓ history/api/registrarJogadaDiaria.php
+✓ history/api/adicionar_pontos.php
+
+Agora ambos usam INSERT ON DUPLICATE KEY UPDATE corretamente!

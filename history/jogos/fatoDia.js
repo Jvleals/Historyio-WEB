@@ -168,6 +168,7 @@ class JogoFatoDia {
     processarErro(botao) {
         botao.classList.remove('btn-outline-primary');
         botao.classList.add('btn-danger');
+        botao.setAttribute('data-errado', 'true');
         this.vidas--;
         this.atualizarVidas();
 
@@ -195,10 +196,13 @@ class JogoFatoDia {
         setTimeout(() => {
             const todosBotoes = document.querySelectorAll('.resposta-btn');
             todosBotoes.forEach(btn => {
-                if (!btn.classList.contains('btn-success')) {
+                if (!btn.classList.contains('btn-success') && !btn.hasAttribute('data-errado')) {
                     btn.classList.remove('disabled', 'btn-danger');
                     btn.classList.add('btn-outline-primary');
                     btn.onclick = () => this.verificarResposta(btn, btn.textContent);
+                } else if (btn.hasAttribute('data-errado')) {
+                    btn.classList.remove('btn-danger');
+                    btn.classList.add('disabled');
                 }
             });
         }, 2000);
@@ -326,6 +330,14 @@ class JogoFatoDia {
 }
 
 // Inicializar o jogo quando a página carregar
+let jogoAtual;
 document.addEventListener('DOMContentLoaded', function() {
-    new JogoFatoDia();
+    jogoAtual = new JogoFatoDia();
 });
+
+// Função global para fechar modal (chamada pelo HTML)
+function fecharModal() {
+    if (jogoAtual) {
+        jogoAtual.fecharModal();
+    }
+}

@@ -35,41 +35,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare("INSERT INTO pontuacoes (usuario_id, modo_jogo, pontos) VALUES (?, ?, ?)");
         $stmt->execute([$userId, $modo, $pontos]);
         
-        // 2. Determinar qual campo atualizar
-        $campoPontos = ($modo === 'diario') ? 'pontos_diarios' : 'pontos_ilimitados';
-        $campoEstatistica = $acertou ? 'total_acertos' : 'total_erros';
+        // 2. Atualizar user_stats usando INSERT ON DUPLICATE KEY UPDATE
+        $pontosDiarios = ($modo === 'diario') ? $pontos : 0;
+        $pontosIlimitados = ($modo === 'ilimitado') ? $pontos : 0;
+        $acertos = $acertou ? 1 : 0;
+        $erros = $acertou ? 0 : 1;
         
-        // 3. Verificar se já existe registro em user_stats
-        $stmt = $pdo->prepare("SELECT id FROM user_stats WHERE usuario_id = ?");
-        $stmt->execute([$userId]);
-        $existeStats = $stmt->fetch();
-        
-        if ($existeStats) {
-            // Atualizar registro existente
-            $stmt = $pdo->prepare("
-                UPDATE user_stats 
-                SET $campoPontos = $campoPontos + ?,
-                    $campoEstatistica = $campoEstatistica + 1,
-                    pontos_totais = pontos_totais + ?,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE usuario_id = ?
-            ");
-            $stmt->execute([$pontos, $pontos, $userId]);
-        } else {
-            // Criar novo registro
-            $valores = array_fill(0, 7, 0);
-            $valores[0] = $userId; // usuario_id
-            $valores[array_search($campoPontos, ['pontos_diarios', 'pontos_ilimitados']) + 1] = $pontos;
-            $valores[array_search($campoEstatistica, ['total_acertos', 'total_erros']) + 3] = 1;
-            $valores[5] = $pontos; // pontos_totais
-            
-            $stmt = $pdo->prepare("
-                INSERT INTO user_stats 
-                (usuario_id, pontos_diarios, pontos_ilimitados, total_acertos, total_erros, pontos_totais) 
-                VALUES (?, ?, ?, ?, ?, ?)
-            ");
-            $stmt->execute($valores);
-        }
+        $stmt = $pdo->prepare("
+            INSERT INTO user_stats 
+            (usuario_id, pontos_diarios, pontos_ilimitados, pontos_totais, total_acertos, total_erros) 
+            VALUES (?, ?, ?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE 
+            pontos_diarios = pontos_diarios + VALUES(pontos_diarios),
+            pontos_ilimitados = pontos_ilimitados + VALUES(pontos_ilimitados),
+            pontos_totais = pontos_totais + VALUES(pontos_totais),
+            total_acertos = total_acertos + VALUES(total_acertos),
+            total_erros = total_erros + VALUES(total_erros),
+            updated_at = CURRENT_TIMESTAMP
+        ");
+        $stmt->execute([$userId, $pontosDiarios, $pontosIlimitados, $pontos, $acertos, $erros]);
         
         // 4. Atualizar ofensiva se for modo diário
         if ($modo === 'diario') {

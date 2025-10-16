@@ -73,16 +73,16 @@ try {
         $updateStmt->bind_param('i', $userId);
         $updateStmt->execute();
         
-        // Adicionar pontos ao modo diário
+        // Adicionar pontos ao modo diário usando ON DUPLICATE KEY UPDATE
         $pontosStmt = $mysqli->prepare("
-            INSERT INTO user_stats (usuario_id, pontos_diarios, pontos_totais, total_acertos) 
-            VALUES (?, ?, ?, 1)
+            INSERT INTO user_stats (usuario_id, pontos_diarios, pontos_totais, total_acertos, pontos_ilimitados, total_erros) 
+            VALUES (?, ?, ?, 1, 0, 0)
             ON DUPLICATE KEY UPDATE 
-            pontos_diarios = pontos_diarios + VALUES(pontos_diarios),
-            pontos_totais = pontos_totais + VALUES(pontos_totais),
+            pontos_diarios = pontos_diarios + ?,
+            pontos_totais = pontos_totais + ?,
             total_acertos = total_acertos + 1
         ");
-        $pontosStmt->bind_param('iii', $userId, $pontuacao, $pontuacao);
+        $pontosStmt->bind_param('iiiii', $userId, $pontuacao, $pontuacao, $pontuacao, $pontuacao);
         $pontosStmt->execute();
     } else {
         // Resetar ofensiva
@@ -90,10 +90,10 @@ try {
         $updateStmt->bind_param('i', $userId);
         $updateStmt->execute();
         
-        // Registrar erro
+        // Registrar erro usando ON DUPLICATE KEY UPDATE
         $erroStmt = $mysqli->prepare("
-            INSERT INTO user_stats (usuario_id, total_erros) 
-            VALUES (?, 1)
+            INSERT INTO user_stats (usuario_id, pontos_diarios, pontos_totais, pontos_ilimitados, total_acertos, total_erros) 
+            VALUES (?, 0, 0, 0, 0, 1)
             ON DUPLICATE KEY UPDATE total_erros = total_erros + 1
         ");
         $erroStmt->bind_param('i', $userId);
