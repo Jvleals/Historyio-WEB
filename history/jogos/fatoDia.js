@@ -172,8 +172,6 @@ class JogoFatoDia {
         this.vidas--;
         this.atualizarVidas();
 
-        this.mostrarRespostaCorreta();
-
         if (this.vidas <= 0) {
             this.jogoAtivo = false;
             setTimeout(() => this.registrarJogada(false, 0), 1000);
@@ -182,21 +180,11 @@ class JogoFatoDia {
         }
     }
 
-    mostrarRespostaCorreta() {
-        const todosBotoes = document.querySelectorAll('.resposta-btn');
-        todosBotoes.forEach(btn => {
-            if (btn.textContent === this.respostaCorreta) {
-                btn.classList.remove('btn-outline-primary');
-                btn.classList.add('btn-success');
-            }
-        });
-    }
-
     permitirNovaTentativa() {
         setTimeout(() => {
             const todosBotoes = document.querySelectorAll('.resposta-btn');
             todosBotoes.forEach(btn => {
-                if (!btn.classList.contains('btn-success') && !btn.hasAttribute('data-errado')) {
+                if (!btn.hasAttribute('data-errado')) {
                     btn.classList.remove('disabled', 'btn-danger');
                     btn.classList.add('btn-outline-primary');
                     btn.onclick = () => this.verificarResposta(btn, btn.textContent);
