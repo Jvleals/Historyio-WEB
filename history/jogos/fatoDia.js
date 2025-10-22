@@ -1,4 +1,5 @@
 // fatoDia.js - SISTEMA COMPLETO DE FATO DO DIA
+
 class JogoFatoDia {
     constructor() {
         this.vidas = 4;
@@ -285,6 +286,7 @@ class JogoFatoDia {
         modalContent.innerHTML = mensagem.replace(/\n/g, '<br>');
         modalTitle.textContent = acertou ? 'Parabéns!' : 'Que Pena!';
         modal.classList.add('show');
+        modal.style.transform = 'none'
     }
 
     fecharModal() {

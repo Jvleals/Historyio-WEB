@@ -454,3 +454,8 @@ body.dark-mode .main-card {
 .modal-content p {
     white-space: pre-line;
 }
+
+/* Gambearra feita para consertar um bug */
+#infoModal {
+    transform: translateX(1000px);
+}

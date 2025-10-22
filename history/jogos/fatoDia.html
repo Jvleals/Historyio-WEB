@@ -25,6 +25,16 @@
         </div>
     </header>
 
+    <!-- Modal de feedback -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="fecharModal()">&times;</span>
+            <h2 id="modalTitle">Resultado</h2>
+            <p id="modalContent"></p>
+            <button class="btn btn-primary w-100" onclick="fecharModal()">Continuar</button>
+        </div>
+    </div>
+
     <main class="container-fluid d-flex justify-content-center align-items-center min-vh-100 py-3">
         <div class="row justify-content-center w-100">
             <div class="col-12 col-sm-10 col-md-8 col-lg-6 col-xl-5">
@@ -63,16 +73,6 @@
             <button onclick="window.location.href='../index.html'"><i class="fas fa-home me-2"></i>Início</button>
             <button onclick="window.location.href='fatoDia.html'"><i class="fas fa-calendar-day me-2"></i>Fato do Dia</button>
             <button onclick="toggleDarkMode()"><i class="fas fa-moon me-2"></i>Modo Escuro/Claro</button>
-        </div>
-    </div>
-
-    <!-- Modal de feedback -->
-    <div class="modal" id="infoModal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="fecharModal()">&times;</span>
-            <h2 id="modalTitle">Resultado</h2>
-            <p id="modalContent"></p>
-            <button class="btn btn-primary w-100" onclick="fecharModal()">Continuar</button>
         </div>
     </div>
 
